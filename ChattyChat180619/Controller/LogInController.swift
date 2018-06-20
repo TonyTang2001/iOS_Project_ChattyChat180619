@@ -7,9 +7,18 @@
 //
 
 import UIKit
+import Firebase
 
 class LogInController: UIViewController {
-
+    
+    let profileImgView: UIImageView = {
+        let imgView = UIImageView()
+        imgView.image = UIImage(named: "Log_pic")
+        imgView.contentMode = .scaleAspectFill
+        imgView.translatesAutoresizingMaskIntoConstraints = false
+        return imgView
+    }()
+    
     let inputsContainerView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.white
@@ -19,7 +28,7 @@ class LogInController: UIViewController {
         return view
     }()
     
-    let logInRegisterButton: UIButton = {
+    lazy var logInRegisterButton: UIButton = {
         let button = UIButton(type:.system)
         button.backgroundColor = UIColor(r: 80, g: 101, b: 161)
         button.setTitle("R E G I S T E R", for:.normal)
@@ -28,8 +37,38 @@ class LogInController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.cornerRadius = 12
         button.layer.masksToBounds = true
+        
+        button.addTarget(self, action: #selector(handleRegister), for: .touchUpInside)
         return button
     }()
+    
+    @objc func handleRegister() {
+        guard let email = emailTextField.text, let password = passwTextField.text, let name = nameTextField.text else {
+            print("invalid")
+            return
+        }
+        
+        Auth.auth().createUser(withEmail: email, password: password, completion: { (user, error) in
+            if error != nil
+            {
+                print(error)
+                return
+            }
+            
+            let ref = Database.database().reference(fromURL: "https://chattychat-dcd41.firebaseio.com/")
+            let values = ["name": name, "email":email]
+            ref.updateChildValues(values, withCompletionBlock: { (err, ref) in
+                
+                if err != nil {
+                    print(err)
+                    return
+                }
+                
+                print("Sucessfully saved user")
+            })
+
+        })
+    }
     
     let nameTextField: UITextField = {
         let textField = UITextField()
@@ -66,12 +105,6 @@ class LogInController: UIViewController {
         return textField
     }()
     
-    let profileImgView: UIImageView = {
-        let imgView = UIImageView()
-        imgView.image = UIImage(named: "")
-        return imgView
-    }()
-    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -79,10 +112,20 @@ class LogInController: UIViewController {
         
         view.addSubview(inputsContainerView)
         view.addSubview(logInRegisterButton)
+        view.addSubview(profileImgView)
         
         setupInputsContainerView()
         setupLogInRegisterButton()
+        setupProfileImgView()
         
+    }
+    
+    func setupProfileImgView() {
+        //Constraints
+        profileImgView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        profileImgView.bottomAnchor.constraint(equalTo: inputsContainerView.topAnchor, constant: -12).isActive = true
+        profileImgView.widthAnchor.constraint(equalToConstant: 200).isActive = true
+        profileImgView.heightAnchor.constraint(equalToConstant: 150).isActive = true
     }
     
     func setupInputsContainerView() {
@@ -152,8 +195,5 @@ extension UIColor {
     }
     
 }
-
-
-
 
 
