@@ -43,24 +43,27 @@ class LogInController: UIViewController {
     }()
     
     @objc func handleRegister() {
+        print("Pressed")
         guard let email = emailTextField.text, let password = passwTextField.text, let name = nameTextField.text else {
             print("invalid")
             return
         }
         
-        Auth.auth().createUser(withEmail: email, password: password, completion: { (user, error) in
+        Auth.auth().createUser(withEmail: email, password: password, completion: { (user: User?, error) in
             if error != nil
             {
                 print(error)
                 return
             }
-            
+            //Sucessfully Authenticated
             let ref = Database.database().reference(fromURL: "https://chattychat-dcd41.firebaseio.com/")
-            let values = ["name": name, "email":email]
-            ref.updateChildValues(values, withCompletionBlock: { (err, ref) in
+            let usersReference = ref.child("users")
+            let values = ["name": name, "email": email]
+            usersReference.updateChildValues(values, withCompletionBlock: { (err, ref) in
                 
                 if err != nil {
                     print(err)
+                    print("AAAAAAAAAASSSSSSSSSSSS")
                     return
                 }
                 
@@ -101,6 +104,7 @@ class LogInController: UIViewController {
     let passwTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Password"
+        textField.isSecureTextEntry = true
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     }()
