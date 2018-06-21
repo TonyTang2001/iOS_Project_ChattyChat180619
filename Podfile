@@ -6,9 +6,5 @@ target 'ChattyChat180619' do
   use_frameworks!
 
   # Pods for ChattyChat180619
-
-pod 'Firebase/Database'
-pod 'Firebase/Auth'
-pod 'Firebase/Storage'
-
+pod 'LeanCloud'
 end

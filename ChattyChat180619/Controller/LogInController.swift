@@ -7,13 +7,13 @@
 //
 
 import UIKit
-import Firebase
+import LeanCloud
 
 class LogInController: UIViewController {
     
     let profileImgView: UIImageView = {
         let imgView = UIImageView()
-        imgView.image = UIImage(named: "Log_pic")
+        imgView.image = UIImage(named: "Log_pic.jpg")
         imgView.contentMode = .scaleAspectFill
         imgView.translatesAutoresizingMaskIntoConstraints = false
         return imgView
@@ -28,7 +28,7 @@ class LogInController: UIViewController {
         return view
     }()
     
-    lazy var logInRegisterButton: UIButton = {
+    let logInRegisterButton: UIButton = {
         let button = UIButton(type:.system)
         button.backgroundColor = UIColor(r: 80, g: 101, b: 161)
         button.setTitle("R E G I S T E R", for:.normal)
@@ -48,29 +48,40 @@ class LogInController: UIViewController {
             print("invalid")
             return
         }
-        
-        Auth.auth().createUser(withEmail: email, password: password, completion: { (user: User?, error) in
-            if error != nil
-            {
-                print(error)
-                return
-            }
-            //Sucessfully Authenticated
-            let ref = Database.database().reference(fromURL: "https://chattychat-dcd41.firebaseio.com/")
-            let usersReference = ref.child("users")
-            let values = ["name": name, "email": email]
-            usersReference.updateChildValues(values, withCompletionBlock: { (err, ref) in
-                
-                if err != nil {
-                    print(err)
-                    print("AAAAAAAAAASSSSSSSSSSSS")
-                    return
-                }
-                
-                print("Sucessfully saved user")
-            })
 
-        })
+        //testing leanCloud
+        let post = LCObject(className: "TestObject")
+        post.set("words", value: "Hello World!")
+        post.save()
+        
+//
+//        Auth.auth().createUser(withEmail: email, password: password, completion: { (user: User?, error) in
+//            if error != nil
+//            {
+//                print(error)
+//                return
+//            }
+//            
+//            guard let uid = user?.uid else {
+//                return
+//            }
+//            
+//            //Sucessfully Authenticated
+//            let ref = Database.database().reference(fromURL: "https://chattychat-dcd41.firebaseio.com/")
+//            let usersReference = ref.child("users").child(uid)
+//            let values = ["name": name, "email": email]
+//            usersReference.updateChildValues(values, withCompletionBlock: { (err, ref) in
+//                
+//                if err != nil {
+//                    print(err)
+//                    print("AAAAAAAAAASSSSSSSSSSSS")
+//                    return
+//                }
+//                
+//                print("Sucessfully saved user")
+//            })
+//
+//        })
     }
     
     let nameTextField: UITextField = {

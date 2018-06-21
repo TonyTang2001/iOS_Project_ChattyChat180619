@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Firebase
+import LeanCloud
 
 class ViewController: UITableViewController {
 
